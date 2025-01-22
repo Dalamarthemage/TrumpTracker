@@ -4,77 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trump Tracker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-
-    header {
-      background-color: #333;
-      color: #fff;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 1rem;
-    }
-
-    .category {
-      flex: 1 1 calc(33% - 2rem);
-      margin: 1rem;
-      background: #fff;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      padding: 1rem;
-    }
-
-    .category h2 {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      border-bottom: 2px solid #333;
-      padding-bottom: 0.3rem;
-    }
-
-    .category ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .category li {
-      margin: 0.5rem 0;
-    }
-
-    .category li a {
-      color: #007BFF;
-      text-decoration: none;
-    }
-
-    .category li a:hover {
-      text-decoration: underline;
-    }
-
-    .featured {
-      width: 100%;
-      text-align: center;
-      margin: 2rem 0;
-    }
-
-    .featured img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 5px;
-    }
-
-    .featured h2 {
-      margin: 1rem 0;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css"> <!-- External CSS file -->
 </head>
 <body>
   <header>
@@ -91,32 +21,23 @@
   </div>
 
   <script>
-    // Constants for magic numbers and other config values
-    const API_KEY = process.env.API_KEY || "8c5ad42344a9347d894f89d97f356528";  // Use environment variable or fallback for local testing
-    const API_URL = "http://api.mediastack.com/v1/news";
+    const API_URL = "https://api.mediastack.com/v1/news"; // Use HTTPS
     const ARTICLE_LIMIT = 7;
-    const CATEGORIES = ['Politics', 'Business', 'World', 'Technology', 'Entertainment'];
 
-    // Fetch the news data with error handling
     async function fetchNews() {
       try {
-        const response = await fetch(`${API_URL}?access_key=${API_KEY}&keywords=Trump&languages=en&sort=published_desc&limit=50`);
-        
-        // Handle non-OK responses
+        const response = await fetch(`${API_URL}?access_key=${process.env.API_KEY}&keywords=Trump&languages=en&sort=published_desc&limit=50`);
         if (!response.ok) {
-          throw new Error(`Failed to fetch news: ${response.statusText}`);
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
         const data = await response.json();
         return data.data || [];
       } catch (error) {
-        console.error("Error fetching news:", error);
-        alert("Failed to load news. Please try again later.");
+        console.error("Failed to fetch news:", error);
         return [];
       }
     }
 
-    // Categorize articles and limit to specific categories with max articles
     function categorizeArticles(articles, limit = ARTICLE_LIMIT) {
       const categories = {
         Politics: [],
@@ -145,10 +66,11 @@
       return categories;
     }
 
-    // Render news articles to the DOM using a document fragment for efficiency
     function renderNews(categories) {
       const container = document.getElementById("news-container");
-      const fragment = document.createDocumentFragment(); // Document fragment for batch DOM updates
+      container.innerHTML = ""; // Clear existing content
+
+      const fragment = document.createDocumentFragment();
 
       Object.entries(categories).forEach(([category, articles]) => {
         if (articles.length === 0) return;
@@ -168,13 +90,12 @@
         });
 
         categoryDiv.appendChild(articleList);
-        fragment.appendChild(categoryDiv);  // Append category to the fragment
+        fragment.appendChild(categoryDiv);
       });
 
-      container.appendChild(fragment); // Append all categories in one go
+      container.appendChild(fragment);
     }
 
-    // Render a featured article (first article from the list)
     function renderFeaturedArticle(article) {
       const featuredDiv = document.getElementById("featured-article");
       featuredDiv.innerHTML = `
@@ -184,7 +105,6 @@
       `;
     }
 
-    // Initialize the news fetching and rendering
     async function initialize() {
       const articles = await fetchNews();
       if (articles.length === 0) {
@@ -195,11 +115,10 @@
       const categories = categorizeArticles(articles);
       renderNews(categories);
 
-      // Display a featured article (first available)
+      // Display a featured article
       if (articles[0]) renderFeaturedArticle(articles[0]);
     }
 
-    // Start the process
     initialize();
   </script>
 </body>
