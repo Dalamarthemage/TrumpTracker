@@ -1,57 +1,69 @@
-/* style.css */
-
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
 }
 
 header {
-    background-color: #333;
-    color: white;
-    padding: 20px;
-    text-align: center;
+  background-color: #333;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
 }
 
-h1 {
-    margin: 0;
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 1rem;
 }
 
-.content {
-    padding: 20px;
+.category {
+  flex: 1 1 calc(33% - 2rem);
+  margin: 1rem;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
 }
 
-.center-image {
-    display: block;
-    margin: 20px auto;
-    max-width: 100%;
-    height: auto;
+.category h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #333;
+  padding-bottom: 0.3rem;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
+.category ul {
+  list-style: none;
+  padding: 0;
 }
 
-ul li {
-    margin-bottom: 20px;
-    background-color: #fff;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.category li {
+  margin: 0.5rem 0;
 }
 
-a {
-    text-decoration: none;
-    color: #0077cc;
+.category li a {
+  color: #007BFF;
+  text-decoration: none;
 }
 
-a:hover {
-    text-decoration: underline;
+.category li a:hover {
+  text-decoration: underline;
 }
 
-em {
-    font-style: italic;
-    color: #666;
+.featured {
+  width: 100%;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.featured img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.featured h2 {
+  margin: 1rem 0;
 }
