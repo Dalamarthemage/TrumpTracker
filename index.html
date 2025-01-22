@@ -95,6 +95,7 @@
     const API_URL = "http://api.mediastack.com/v1/news";
 
     async function fetchNews() {
+      // Fetching news related to Trump, in English, sorted by published date and limited to 50 articles
       const response = await fetch(`${API_URL}?access_key=${API_KEY}&keywords=Trump&languages=en&sort=published_desc&limit=50`);
       const data = await response.json();
       return data.data || [];
