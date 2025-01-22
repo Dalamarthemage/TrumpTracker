@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const data = await response.json();
+            console.log("API Response:", data); // Log API response
 
             const newsList = document.getElementById('news-list');
             newsList.innerHTML = '';  // Clear previous content
@@ -30,7 +31,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 const fragment = document.createDocumentFragment();
 
                 data.data
-                    .filter(article => isArticleFromLast24Hours(article.published_at))  // Filter articles from the last 24 hours
+                    .filter(article => {
+                        const isRecent = isArticleFromLast24Hours(article.published_at);
+                        console.log(`Article published at ${article.published_at} is recent: ${isRecent}`);
+                        return isRecent;
+                    })  // Filter articles from the last 24 hours
                     .forEach(article => {
                         const listItem = document.createElement('li');
                         listItem.innerHTML = `<a href="${article.url}" target="_blank">
