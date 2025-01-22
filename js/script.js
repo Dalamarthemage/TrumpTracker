@@ -2,6 +2,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const API_URL = 'https://api.mediastack.com/v1/news';
     const API_KEY = process.env.API_KEY || '8c5ad42344a9347d894f89d97f356528';  // Use environment variable or fallback for local testing
     const LIMIT = 7;  // Limit to 7 articles
+    const HOURS_LIMIT = 24; // Limit to 24 hours
+
+    // Function to get articles from the last 24 hours
+    function isArticleFromLast24Hours(publishedAt) {
+        const currentTime = new Date();
+        const articleTime = new Date(publishedAt);
+        const timeDifference = currentTime - articleTime; // Time difference in milliseconds
+        const hoursDifference = timeDifference / (1000 * 60 * 60); // Convert to hours
+        return hoursDifference <= HOURS_LIMIT;
+    }
 
     async function fetchTrumpNews() {
         try {
@@ -19,15 +29,24 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.data && data.data.length > 0) {
                 const fragment = document.createDocumentFragment();
 
-                data.data.forEach(article => {
-                    const listItem = document.createElement('li');
-                    listItem.innerHTML = `<a href="${article.url}" target="_blank">
-                                            <strong>${article.title}</strong><br>
-                                            <em>${article.source.name}</em><br>
-                                            ${article.description}
-                                          </a>`;
-                    fragment.appendChild(listItem);
-                });
+                data.data
+                    .filter(article => isArticleFromLast24Hours(article.published_at))  // Filter articles from the last 24 hours
+                    .forEach(article => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `<a href="${article.url}" target="_blank">
+                                                <strong>${article.title}</strong><br>
+                                                <em>${article.source.name}</em><br>
+                                                ${article.description}
+                                              </a>`;
+                        fragment.appendChild(listItem);
+                    });
+
+                // If no articles are from the last 24 hours
+                if (fragment.children.length === 0) {
+                    const noArticlesMessage = document.createElement('li');
+                    noArticlesMessage.textContent = "No articles found in the last 24 hours.";
+                    fragment.appendChild(noArticlesMessage);
+                }
 
                 newsList.appendChild(fragment);
             } else {
