@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const API_URL = 'http://api.mediastack.com/v1/news';
+    const API_URL = 'https://api.mediastack.com/v1/news';
     const API_KEY = '8c5ad42344a9347d894f89d97f356528';  // Insert your MediaStack API Key
     const LIMIT = 7;  // Limit to 7 articles
 
