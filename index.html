@@ -95,7 +95,6 @@
     const API_URL = "http://api.mediastack.com/v1/news";
 
     async function fetchNews() {
-      // Fetching news related to Trump, in English, sorted by published date and limited to 50 articles
       const response = await fetch(`${API_URL}?access_key=${API_KEY}&keywords=Trump&languages=en&sort=published_desc&limit=50`);
       const data = await response.json();
       return data.data || [];
@@ -113,20 +112,15 @@
       articles.forEach(article => {
         const title = article.title.toLowerCase();
 
-        if (categories.Politics.length < limit &&
-            (article.category === "politics" || /election|congress|law|senate|government/.test(title))) {
+        if (categories.Politics.length < limit && /election|congress|law|senate|government/.test(title)) {
           categories.Politics.push(article);
-        } else if (categories.Business.length < limit &&
-                   (article.category === "business" || /economy|finance|stocks|market/.test(title))) {
+        } else if (categories.Business.length < limit && /economy|finance|stocks|market/.test(title)) {
           categories.Business.push(article);
-        } else if (categories.World.length < limit &&
-                   (article.category === "general" || article.category === "world" || /geopolitics|international/.test(title))) {
+        } else if (categories.World.length < limit && /geopolitics|international/.test(title)) {
           categories.World.push(article);
-        } else if (categories.Technology.length < limit &&
-                   (article.category === "technology" || /ai|tech|innovation|software/.test(title))) {
+        } else if (categories.Technology.length < limit && /ai|tech|innovation|software/.test(title)) {
           categories.Technology.push(article);
-        } else if (categories.Entertainment.length < limit &&
-                   (article.category === "entertainment" || /movie|tv|music|celebrities/.test(title))) {
+        } else if (categories.Entertainment.length < limit && /movie|tv|music|celebrities/.test(title)) {
           categories.Entertainment.push(article);
         }
       });
@@ -136,7 +130,7 @@
 
     function renderNews(categories) {
       const container = document.getElementById("news-container");
-      container.innerHTML = "";
+      container.innerHTML = ""; // Clear existing content
 
       Object.entries(categories).forEach(([category, articles]) => {
         if (articles.length === 0) return;
