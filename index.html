@@ -91,16 +91,33 @@
   </div>
 
   <script>
-    const API_KEY = "8c5ad42344a9347d894f89d97f356528";
+    // Constants for magic numbers and other config values
+    const API_KEY = process.env.API_KEY || "8c5ad42344a9347d894f89d97f356528";  // Use environment variable or fallback for local testing
     const API_URL = "http://api.mediastack.com/v1/news";
+    const ARTICLE_LIMIT = 7;
+    const CATEGORIES = ['Politics', 'Business', 'World', 'Technology', 'Entertainment'];
 
+    // Fetch the news data with error handling
     async function fetchNews() {
-      const response = await fetch(`${API_URL}?access_key=${API_KEY}&keywords=Trump&languages=en&sort=published_desc&limit=50`);
-      const data = await response.json();
-      return data.data || [];
+      try {
+        const response = await fetch(`${API_URL}?access_key=${API_KEY}&keywords=Trump&languages=en&sort=published_desc&limit=50`);
+        
+        // Handle non-OK responses
+        if (!response.ok) {
+          throw new Error(`Failed to fetch news: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.data || [];
+      } catch (error) {
+        console.error("Error fetching news:", error);
+        alert("Failed to load news. Please try again later.");
+        return [];
+      }
     }
 
-    function categorizeArticles(articles, limit = 7) {
+    // Categorize articles and limit to specific categories with max articles
+    function categorizeArticles(articles, limit = ARTICLE_LIMIT) {
       const categories = {
         Politics: [],
         Business: [],
@@ -128,9 +145,10 @@
       return categories;
     }
 
+    // Render news articles to the DOM using a document fragment for efficiency
     function renderNews(categories) {
       const container = document.getElementById("news-container");
-      container.innerHTML = ""; // Clear existing content
+      const fragment = document.createDocumentFragment(); // Document fragment for batch DOM updates
 
       Object.entries(categories).forEach(([category, articles]) => {
         if (articles.length === 0) return;
@@ -150,10 +168,13 @@
         });
 
         categoryDiv.appendChild(articleList);
-        container.appendChild(categoryDiv);
+        fragment.appendChild(categoryDiv);  // Append category to the fragment
       });
+
+      container.appendChild(fragment); // Append all categories in one go
     }
 
+    // Render a featured article (first article from the list)
     function renderFeaturedArticle(article) {
       const featuredDiv = document.getElementById("featured-article");
       featuredDiv.innerHTML = `
@@ -163,6 +184,7 @@
       `;
     }
 
+    // Initialize the news fetching and rendering
     async function initialize() {
       const articles = await fetchNews();
       if (articles.length === 0) {
@@ -173,10 +195,11 @@
       const categories = categorizeArticles(articles);
       renderNews(categories);
 
-      // Display a featured article
+      // Display a featured article (first available)
       if (articles[0]) renderFeaturedArticle(articles[0]);
     }
 
+    // Start the process
     initialize();
   </script>
 </body>
